@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="lv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../src/css/style.css">
+    <script src="../src/js/validation.js" defer></script>
+    <title>Login</title>
+</head>
+<body>
+    <main class="page-card">
+        <h1>Login</h1>
+        <p id="error_message" class="error-message"></p>
+        <form id="login-form" novalidate>
+            <label>
+                Lietotājvārds
+                <input type="text" id="login_username" name="username" placeholder="username" required>
+            </label>
+            <label>
+                Parole
+                <input type="password" id="login_password" name="password" placeholder="Password" required>
+            </label>
+            <button type="submit">Ienākt</button>
+        </form>
+        <p class="small-note">Ja nav konta: <a href="index.html">Reģistrēties</a></p>
+    </main>
+</body>
+</html>
