@@ -8,7 +8,7 @@ if (!$currentUser || $currentUser['role'] !== 'admin') {
 }
 
 $stmt = $db->query('SELECT t.*, COUNT(q.id) AS question_count FROM topics t LEFT JOIN questions q ON q.topic_id = t.id GROUP BY t.id ORDER BY t.name ASC');
-topics = $stmt->fetchAll();
+$topics = $stmt->fetchAll();
 ?>
 <!DOCTYPE html>
 <html lang="lv">

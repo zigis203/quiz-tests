@@ -1,37 +1,61 @@
 class Quiz {
-    constructor(questions, questionElement, answerButtonsElement, nextButton) {
+    constructor(questions, questionElement, answerButtonsElement, nextButton, progressFill, progressLabel) {
         this.questions = questions;
         this.questionElement = questionElement;
         this.answerButtonsElement = answerButtonsElement;
         this.nextButton = nextButton;
+        this.progressFill = progressFill;
+        this.progressLabel = progressLabel;
         this.currentQuestionIndex = 0;
-        this.score = 0;
+        this.selectedAnswers = {};
         this.nextButton.addEventListener('click', () => this.handleNextQuestion());
     }
 
     start() {
         this.currentQuestionIndex = 0;
-        this.score = 0;
-        this.nextButton.textContent = 'Next';
+        this.selectedAnswers = {};
+        this.nextButton.textContent = 'Nākamais jautājums';
         this.showQuestion();
     }
 
     showQuestion() {
         this.clearAnswers();
         const currentQuestion = this.questions[this.currentQuestionIndex];
-        document.getElementById('question-number').textContent = `Jautājums ${this.currentQuestionIndex + 1} / ${this.questions.length}`;
-        this.questionElement.textContent = currentQuestion.question;
+        const questionNumber = this.currentQuestionIndex + 1;
+        const totalQuestions = this.questions.length;
 
-        currentQuestion.answers.forEach(answer => {
-            const button = document.createElement('button');
-            button.textContent = answer.text;
-            button.className = 'btn answer-btn';
-            if (answer.correct) {
-                button.dataset.correct = 'true';
-            }
-            button.addEventListener('click', event => this.selectAnswer(event));
-            this.answerButtonsElement.appendChild(button);
-        });
+        // Update progress bar
+        const progressPercent = (questionNumber / totalQuestions) * 100;
+        this.progressFill.style.width = progressPercent + '%';
+        this.progressLabel.textContent = `Jautājums ${questionNumber} no ${totalQuestions}`;
+
+        // Display question
+        this.questionElement.textContent = currentQuestion.question_text;
+
+        // Display answers
+        if (currentQuestion.answers && Array.isArray(currentQuestion.answers)) {
+            currentQuestion.answers.forEach(answer => {
+                const button = document.createElement('button');
+                button.textContent = answer.answer_text;
+                button.className = 'btn answer-btn';
+                button.dataset.answerId = answer.id;
+                
+                // Check if this answer was already selected
+                if (this.selectedAnswers[currentQuestion.id] === answer.id) {
+                    button.classList.add('selected');
+                }
+                
+                button.addEventListener('click', (event) => this.selectAnswer(event, currentQuestion.id));
+                this.answerButtonsElement.appendChild(button);
+            });
+        }
+
+        // Update button text for last question
+        if (this.currentQuestionIndex === this.questions.length - 1) {
+            this.nextButton.textContent = 'Pabeigt testu';
+        }
+
+        this.nextButton.style.display = 'inline-block';
     }
 
     clearAnswers() {
@@ -39,79 +63,88 @@ class Quiz {
         this.answerButtonsElement.innerHTML = '';
     }
 
-    selectAnswer(event) {
+    selectAnswer(event, questionId) {
         const selectedButton = event.target;
-        const isCorrect = selectedButton.dataset.correct === 'true';
-        if (isCorrect) {
-            selectedButton.classList.add('correct');
-            this.score += 1;
-        } else {
-            selectedButton.classList.add('incorrect');
-        }
+        const answerId = parseInt(selectedButton.dataset.answerId);
 
+        // Store the selected answer
+        this.selectedAnswers[questionId] = answerId;
+
+        // Update button styling
         Array.from(this.answerButtonsElement.children).forEach(button => {
-            button.disabled = true;
-            if (button.dataset.correct === 'true') {
-                button.classList.add('correct');
-            }
+            button.classList.remove('selected');
         });
+        selectedButton.classList.add('selected');
 
         this.nextButton.style.display = 'inline-block';
     }
 
     handleNextQuestion() {
+        // Check if user selected an answer
+        const currentQuestion = this.questions[this.currentQuestionIndex];
+        if (!this.selectedAnswers[currentQuestion.id]) {
+            alert('Lūdzu, izvēlieties atbildi pirms turpināt.');
+            return;
+        }
+
         this.currentQuestionIndex += 1;
         if (this.currentQuestionIndex < this.questions.length) {
             this.showQuestion();
         } else {
-            this.saveResult();
-            window.location.href = 'results.html';
+            this.submitQuiz();
         }
     }
 
-    saveResult() {
-        localStorage.setItem('quizScore', this.score.toString());
-        localStorage.setItem('quizTotal', this.questions.length.toString());
+    submitQuiz() {
+        this.nextButton.disabled = true;
+        this.nextButton.textContent = 'Sūta rezultātus...';
+
+        const answers = this.selectedAnswers;
+
+        fetch('./quiz-submit.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ answers: answers }),
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                window.location.href = 'results.php';
+            } else {
+                alert('Kļūda sūtot rezultātus: ' + (data.message || 'Nezināma kļūda'));
+                this.nextButton.disabled = false;
+                this.nextButton.textContent = 'Pabeigt testu';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Kļūda sūtot rezultātus. Lūdzu, mēģiniet vēlreiz.');
+            this.nextButton.disabled = false;
+            this.nextButton.textContent = 'Pabeigt testu';
+        });
     }
 }
 
-const questions = [
-    {
-        question: 'Kurš ir lielākais zīdītājs uz Zemes?',
-        answers: [
-            { text: 'Bumba', correct: false },
-            { text: 'Zilais valis', correct: true },
-            { text: 'Zilonis', correct: false },
-            { text: 'Žirafe', correct: false }
-        ]
-    },
-    {
-        question: 'Kura zvaigzne ir redzama mūsu dienvidu puslodē?',
-        answers: [
-            { text: 'Polārzvaigzne', correct: false },
-            { text: 'Saule', correct: false },
-            { text: 'Crux (Kasiopeja)', correct: true },
-            { text: 'Oriona josta', correct: false }
-        ]
-    },
-    {
-        question: 'Kurā gadā cilvēks pirmo reizi nolaidās uz Mēness?',
-        answers: [
-            { text: '1969', correct: true },
-            { text: '1958', correct: false },
-            { text: '1975', correct: false },
-            { text: '1983', correct: false }
-        ]
-    }
-];
-
+// Initialize quiz when DOM is loaded
 window.addEventListener('DOMContentLoaded', () => {
-    const quiz = new Quiz(
-        questions,
-        document.getElementById('question'),
-        document.getElementById('answer-buttons'),
-        document.getElementById('next-btn')
-    );
+    const questionElement = document.getElementById('question-text');
+    const answerButtonsElement = document.getElementById('answer-buttons');
+    const nextButton = document.getElementById('next-btn');
+    const progressFill = document.getElementById('progress-fill');
+    const progressLabel = document.getElementById('progress-label');
 
-    quiz.start();
+    if (window.quizData && Array.isArray(window.quizData)) {
+        const quiz = new Quiz(window.quizData, questionElement, answerButtonsElement, nextButton, progressFill, progressLabel);
+        quiz.start();
+    } else {
+        console.error('Quiz data not available');
+        document.body.innerHTML = '<main class="page-card"><h1>Kļūda</h1><p>Testa dati netika ielādēti. Lūdzu, mēģiniet vēlreiz.</p><a class="button-link" href="topics.php">Atpakaļ uz tēmu izvēli</a></main>';
+    }
 });

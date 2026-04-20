@@ -82,11 +82,13 @@ class User
     public static function login(array $user): void
     {
         $_SESSION['user_id'] = $user['id'];
+        $_SESSION['username'] = $user['username'];
+        $_SESSION['role'] = $user['role'];
     }
 
     public static function logout(): void
     {
-        unset($_SESSION['user_id']);
+        session_destroy();
     }
 
     public static function getCurrentUser(PDO $db): ?array
