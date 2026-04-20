@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="lv">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Rezultāts</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f2f2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .card {
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            width: 400px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        .result {
+            font-size: 20px;
+            color: green;
+            margin-bottom: 25px;
+            font-weight: bold;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .retry {
+            background: #28a745;
+            color: white;
+        }
+
+        .retry:hover {
+            background: #1e7e34;
+        }
+
+        .topic {
+            background: #007bff;
+            color: white;
+        }
+
+        .topic:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="card">
+        <h2>Your Quiz Results</h2>
+
+        <div class="result" id="resultText">
+            <!-- Rezultāts tiks ielikts ar JS -->
+        </div>
+
+        <button class="retry" onclick="retakeQuiz()">Atkārtot testu</button>
+        <button class="topic" onclick="chooseTopic()">Izvēlēties citu tematu</button>
+    </div>
+
+    <script>
+        // Šos datus vēlāk vari saņemt no PHP
+        let correct = 7;
+        let total = 10;
+        let username = "Sandi";
+
+        // Parāda rezultātu
+        document.getElementById("resultText").innerText =
+            username + ", tu pareizi atbildēji uz " + correct + " no " + total + " jautājumiem!";
+
+        // Poga: atkārtot testu
+        function retakeQuiz() {
+            window.location.href = "quiz.php"; // vai ar topic parametru
+        }
+
+        // Poga: atpakaļ uz tematiem
+        function chooseTopic() {
+            window.location.href = "index.html";
+        }
+    </script>
+
+</body>
+
+</html>

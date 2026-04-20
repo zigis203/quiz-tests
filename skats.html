@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="lv">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Testa temata izvēle</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f2f2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .card {
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            width: 350px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="card">
+        <h2>Izvēlies testa tematu</h2>
+
+        <select id="topic">
+            <option value="">-- Izvēlies tematu --</option>
+            <option value="sports">Sports</option>
+            <option value="music">Mūzika</option>
+            <option value="movies">Filmas</option>
+            <option value="science">Zinātne</option>
+            <option value="history">Vēsture</option>
+        </select>
+
+        <button onclick="startQuiz()">Sākt testu</button>
+    </div>
+
+    <script>
+        function startQuiz() {
+            const topic = document.getElementById("topic").value;
+
+            if (!topic) {
+                alert("Lūdzu izvēlies tematu!");
+                return;
+            }
+
+            // Šeit vēlāk vari pāriet uz PHP lapu ar jautājumiem
+            window.location.href = "quiz.php?topic=" + topic;
+        }
+    </script>
+
+</body>
+
+</html>
