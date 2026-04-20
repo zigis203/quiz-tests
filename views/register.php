@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../config/config.php';
 $db = Database::getInstance()->getConnection();
 $userModel = new User($db);
 $errors = [];
@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../src/css/style.css">
+    <link rel="stylesheet" href="../public/css/style.css">
     <title>Reģistrēties</title>
 </head>
 <body>

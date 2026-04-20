@@ -8,7 +8,7 @@ define('DB_PASS', 'quiz_pass');
 define('BASE_URL', '/pages');
 
 spl_autoload_register(function ($class) {
-    $path = __DIR__ . '/app/' . $class . '.php';
+    $path = __DIR__ . '/../app/models/' . $class . '.php';
     if (file_exists($path)) {
         require_once $path;
     }

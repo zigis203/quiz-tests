@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../config/config.php';
 $db = Database::getInstance()->getConnection();
 $currentUser = User::getCurrentUser($db);
 if (!$currentUser) {
@@ -37,12 +37,12 @@ if (isset($_GET['topic_id']) && filter_var($_GET['topic_id'], FILTER_VALIDATE_IN
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../src/css/quiz.css">
+    <link rel="stylesheet" href="../public/css/quiz.css">
     <script>
         window.quizData = <?php echo json_encode($questions, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
         window.quizTopicName = <?php echo json_encode($topic['name'], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
     </script>
-    <script src="../src/js/quiz.js" defer></script>
+    <script src="../public/js/quiz.js" defer></script>
     <title><?php echo htmlspecialchars($topic['name'], ENT_QUOTES); ?> - Quiz</title>
 </head>
 <body>

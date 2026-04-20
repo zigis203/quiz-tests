@@ -112,6 +112,6 @@ try {
     </style>
 </head>
 <body>
-    <a href="pages/index.php">← Doties uz sākumpalapu</a>
+    <a href="../views/index.php">← Doties uz sākumpalapu</a>
 </body>
 </html>

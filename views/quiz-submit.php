@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../config/config.php';
 $db = Database::getInstance()->getConnection();
 $currentUser = User::getCurrentUser($db);
 if (!$currentUser) {

@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../config/config.php';
 $db = Database::getInstance()->getConnection();
 $currentUser = User::getCurrentUser($db);
 if ($currentUser) {
@@ -12,7 +12,7 @@ if ($currentUser) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../src/css/style.css">
+    <link rel="stylesheet" href="../public/css/style.css">
     <title>Quiz Tests</title>
 </head>
 <body>
