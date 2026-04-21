@@ -7,13 +7,19 @@ $errors = [];
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
     $password = trim($_POST['password'] ?? '');
-    $user = $userModel->authenticate($username, $password);
-    if ($user) {
-        User::login($user);
-        header('Location: topics.php');
-        exit;
+    
+    if (!$username || !$password) {
+        $errors[] = 'Lietotājvārds un parole ir obligāti.';
+    } else {
+        $user = $userModel->authenticate($username, $password);
+        if ($user) {
+            User::login($user);
+            header('Location: ./topics.php');
+            exit;
+        } else {
+            $errors[] = 'Nederīgs lietotājvārds vai parole.';
+        }
     }
-    $errors[] = 'Nederīgs lietotājvārds vai parole.';
 }
 ?>
 <!DOCTYPE html>
@@ -36,6 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <button type="submit">Ienākt</button>
         </form>
         <p class="small-note">Nav konta? <a href="register.php">Reģistrējies</a></p>
+        <p class="small-note"><a href="setup-admin.php">⚙️ Admin iestatīšana</a></p>
     </main>
 </body>
 </html>

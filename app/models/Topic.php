@@ -28,4 +28,16 @@ class Topic
         $stmt->execute([':name' => $name, ':description' => $description]);
         return (int)$this->db->lastInsertId();
     }
+
+    public function updateTopic(int $id, string $name, string $description = null): bool
+    {
+        $stmt = $this->db->prepare('UPDATE topics SET name = :name, description = :description WHERE id = :id');
+        return $stmt->execute([':id' => $id, ':name' => $name, ':description' => $description]);
+    }
+
+    public function deleteTopic(int $id): bool
+    {
+        $stmt = $this->db->prepare('DELETE FROM topics WHERE id = :id');
+        return $stmt->execute([':id' => $id]);
+    }
 }

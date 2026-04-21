@@ -15,6 +15,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $result = $userModel->register($username, $email, $password);
         if ($result['success']) {
+            // Automātiski pierakstīt lietotāju pēc reģistrācijas
+            $user = $userModel->authenticate($username, $password);
+            if ($user) {
+                User::login($user);
+                header('Location: topics.php');
+                exit;
+            }
             header('Location: login.php');
             exit;
         }

@@ -29,6 +29,13 @@ class Question
         return $stmt->fetchAll();
     }
 
+    public function getAnswersWithCorrect(int $questionId): array
+    {
+        $stmt = $this->db->prepare('SELECT id, answer_text, is_correct FROM answers WHERE question_id = :question_id ORDER BY id ASC');
+        $stmt->execute([':question_id' => $questionId]);
+        return $stmt->fetchAll();
+    }
+
     public function addQuestionWithAnswers(int $topicId, string $questionText, array $answers): int
     {
         $stmt = $this->db->prepare('INSERT INTO questions (topic_id, question_text) VALUES (:topic_id, :question_text)');
@@ -45,5 +52,47 @@ class Question
         }
 
         return $questionId;
+    }
+
+    public function getQuestionById(int $id): ?array
+    {
+        $stmt = $this->db->prepare('SELECT * FROM questions WHERE id = :id LIMIT 1');
+        $stmt->execute([':id' => $id]);
+        $question = $stmt->fetch();
+        if ($question) {
+            $question['answers'] = $this->getAnswersWithCorrect($id);
+        }
+        return $question ?: null;
+    }
+
+    public function getQuestionsByTopic(int $topicId): array
+    {
+        $stmt = $this->db->prepare('SELECT * FROM questions WHERE topic_id = :topic_id ORDER BY id ASC');
+        $stmt->execute([':topic_id' => $topicId]);
+        return $stmt->fetchAll();
+    }
+
+    public function updateQuestion(int $id, string $questionText): bool
+    {
+        $stmt = $this->db->prepare('UPDATE questions SET question_text = :question_text WHERE id = :id');
+        return $stmt->execute([':id' => $id, ':question_text' => $questionText]);
+    }
+
+    public function deleteQuestion(int $id): bool
+    {
+        $stmt = $this->db->prepare('DELETE FROM questions WHERE id = :id');
+        return $stmt->execute([':id' => $id]);
+    }
+
+    public function updateAnswer(int $id, string $answerText, bool $isCorrect): bool
+    {
+        $stmt = $this->db->prepare('UPDATE answers SET answer_text = :answer_text, is_correct = :is_correct WHERE id = :id');
+        return $stmt->execute([':id' => $id, ':answer_text' => $answerText, ':is_correct' => $isCorrect ? 1 : 0]);
+    }
+
+    public function deleteAnswer(int $id): bool
+    {
+        $stmt = $this->db->prepare('DELETE FROM answers WHERE id = :id');
+        return $stmt->execute([':id' => $id]);
     }
 }
